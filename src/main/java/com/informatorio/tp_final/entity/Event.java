@@ -18,14 +18,12 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
     private String description;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
 
-    @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
@@ -34,7 +32,13 @@ public class Event {
 
     private Double reward;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany()
+    @JoinTable(
+            name="event_startups",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "startup_id")
+    )
+
     private List<Startup> startups = new ArrayList<>();
 
     public Event() {

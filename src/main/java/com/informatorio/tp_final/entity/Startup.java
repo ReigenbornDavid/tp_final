@@ -40,27 +40,18 @@ public class Startup {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "startup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "startup", cascade = CascadeType.ALL)
     private List<Tag> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "startup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "startup", cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "startups")
     private List<Event> events = new ArrayList<>();
 
     public Startup() {
-    }
-
-    public Startup(Long id, String name, String description, String content, LocalDate creationDate, Double income, Boolean published, String url, User user) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.content = content;
-        this.creationDate = creationDate;
-        this.income = income;
-        this.published = published;
-        this.url = url;
-        this.user = user;
     }
 }

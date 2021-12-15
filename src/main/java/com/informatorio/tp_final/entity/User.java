@@ -22,18 +22,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //@NotEmpty(message = "El nombre no debe estar vacio")
     private String firstName;
 
+    //@NotEmpty(message = "El apellido no debe estar vacio")
     private String lastName;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
 
-    @Pattern(regexp="^(.+)@(\\S+)$", message=("Formato Incorrecto"))
-    @Column(unique = true, length = 45)
+    //@NotEmpty(message = "El email no debe estar vacio")
+    @Pattern(regexp="^(.+)@(\\S+)$", message=("El formato del email es incorrecto"))
+    @Column(unique = true)
     private String email;
 
+    //@NotEmpty(message = "La contraseña no debe estar vacia")
     private String password;
 
     private String city;
@@ -49,22 +53,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Startup> startups = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
     public User() {
-    }
-
-    public User(Long id, String firstName, String lastName, LocalDate creationDate, String email, String password, String city, String province, String country, Type type) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.creationDate = creationDate;
-        this.email = email;
-        this.password = password;
-        this.city = city;
-        this.province = province;
-        this.country = country;
-        this.type = type;
     }
 }
