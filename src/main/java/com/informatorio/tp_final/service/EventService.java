@@ -28,12 +28,15 @@ public class EventService {
     }
 
     public ArrayList<Startup> getStartupsById(Long id) {
-        Event event = eventRepository.findById(id).get();
-        var startups = new ArrayList<Startup>(event.getStartups());
-
-        startups.sort(
-                (Startup s1,Startup s2) -> (Integer.compare(s2.getVotes().size(), s1.getVotes().size())));
-
+        ArrayList<Startup> startups = new ArrayList<Startup>();
+        if (eventRepository.existsById(id)){
+            Event event = eventRepository.findById(id).get();
+            startups = new ArrayList<Startup>(event.getStartups());
+            if (startups.size() > 1){
+                startups.sort(
+                        (Startup s1,Startup s2) -> (Integer.compare(s2.getVotes().size(), s1.getVotes().size())));
+            }
+        }
         return  startups;
     }
 
@@ -42,14 +45,26 @@ public class EventService {
     }
 
     public Event addStartupToEvent(Long eventId, Long startupId) {
-        Startup startup = startupRepository.findById(startupId).get();
-        Event event = eventRepository.findById(eventId).get();
-        event.getStartups().add(startup);
-        return eventRepository.save(event);
+        Event event = null;
+        if (eventRepository.existsById(eventId) && startupRepository.existsById(startupId)){
+            Startup startup = startupRepository.findById(startupId).get();
+            event = eventRepository.findById(eventId).get();
+            if (!event.getStartups().contains(startup)){
+                event.getStartups().add(startup);
+                event = eventRepository.save(event);
+            }else{
+                event = null;
+            }
+        }
+        return event;
     }
 
     public Event getById(Long id){
-        return eventRepository.findById(id).get();
+        Event event =  null;
+        if(eventRepository.existsById(id)){
+            event = eventRepository.findById(id).get();
+        }
+        return  event;
     }
 
     public boolean deleteById(Long id) {
@@ -62,7 +77,11 @@ public class EventService {
     }
 
     public Event updateById(Long id, Event event) {
-        event.setId(id);
-        return eventRepository.save(event);
+        Event eventResult =  null;
+        if(eventRepository.existsById(id)){
+            event.setId(id);
+            eventResult = eventRepository.save(event);
+        }
+        return eventResult;
     }
 }

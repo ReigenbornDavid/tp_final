@@ -30,11 +30,17 @@ public class VoteService {
     }
 
     public Vote addVoteToStartupByUser(Long voteId, Long startupId, Long userId) {
-        Startup startup = startupRepository.findById(startupId).get();
-        User user = userRepository.findById(userId).get();
-        Vote vote = voteRepository.findById(voteId).get();
-        vote.setUser(user);
-        vote.setStartup(startup);
-        return voteRepository.save(vote);
+        Vote vote = null;
+        if (startupRepository.existsById(startupId) &&
+            voteRepository.existsById(voteId) &&
+            userRepository.existsById(userId)){
+            Startup startup = startupRepository.findById(startupId).get();
+            User user = userRepository.findById(userId).get();
+            vote = voteRepository.findById(voteId).get();
+            vote.setUser(user);
+            vote.setStartup(startup);
+            vote = voteRepository.save(vote);
+        }
+        return vote;
     }
 }

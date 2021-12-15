@@ -30,7 +30,11 @@ public class TagService {
     }
 
     public Tag getById(Long id){
-        return tagRepository.findById(id).get();
+        Tag tag =  null;
+        if(tagRepository.existsById(id)){
+            tag = tagRepository.findById(id).get();
+        }
+        return  tag;
     }
 
     public boolean deleteById(Long id) {
@@ -43,14 +47,22 @@ public class TagService {
     }
 
     public Tag updateById(Long id, Tag tag) {
-        tag.setId(id);
-        return tagRepository.save(tag);
+        Tag tagResult =  null;
+        if(tagRepository.existsById(id)){
+            tag.setId(id);
+            tagResult = tagRepository.save(tag);
+        }
+        return tagResult;
     }
 
     public Tag addTagToStartup(Long tagId, Long startupId) {
-        Startup startup = startupRepository.findById(startupId).get();
-        Tag tag = tagRepository.findById(tagId).get();
-        tag.setStartup(startup);
-        return tagRepository.save(tag);
+        Tag tag = null;
+        if (tagRepository.existsById(tagId) && startupRepository.existsById(startupId)){
+            Startup startup = startupRepository.findById(startupId).get();
+            tag = tagRepository.findById(tagId).get();
+            tag.setStartup(startup);
+            tag = tagRepository.save(tag);
+        }
+        return tag;
     }
 }

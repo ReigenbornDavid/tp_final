@@ -22,8 +22,11 @@ public class UserService {
     }
 
     public ArrayList<Vote> getVotesById(Long id) {
-        User user = userRepository.findById(id).get();
-        var votes =  voteRepository.findByUser(user);
+        ArrayList<Vote> votes =  new ArrayList<Vote>();
+        if(userRepository.existsById(id)){
+            User user = userRepository.findById(id).get();
+            votes =  voteRepository.findByUser(user);
+        }
         return  votes;
     }
 
@@ -32,7 +35,11 @@ public class UserService {
     }
 
     public User getById(Long id){
-        return userRepository.findById(id).get();
+        User user =  null;
+        if(userRepository.existsById(id)){
+            user = userRepository.findById(id).get();
+        }
+        return  user;
     }
 
     public boolean deleteById(Long id) {
@@ -54,7 +61,11 @@ public class UserService {
     }
 
     public User updateById(Long id, User user) {
-        user.setId(id);
-        return userRepository.save(user);
+        User userResult =  null;
+        if(userRepository.existsById(id)){
+            user.setId(id);
+            userResult = userRepository.save(user);
+        }
+        return userResult;
     }
 }

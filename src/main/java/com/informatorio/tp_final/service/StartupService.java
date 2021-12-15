@@ -1,8 +1,7 @@
 package com.informatorio.tp_final.service;
-import com.informatorio.tp_final.entity.Startup;
-import com.informatorio.tp_final.entity.User;
-import com.informatorio.tp_final.entity.Vote;
+import com.informatorio.tp_final.entity.*;
 import com.informatorio.tp_final.repository.StartupRepository;
+import com.informatorio.tp_final.repository.TagRepository;
 import com.informatorio.tp_final.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,9 @@ public class StartupService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TagRepository tagRepository;
+
     public ArrayList<Startup> getStartups(){
         return (ArrayList<Startup>) startupRepository.findAll();
     }
@@ -29,7 +31,11 @@ public class StartupService {
     }
 
     public Startup getById(Long id){
-        return startupRepository.findById(id).get();
+        Startup startup =  null;
+        if(startupRepository.existsById(id)){
+            startup = startupRepository.findById(id).get();
+        }
+        return  startup;
     }
 
     public Startup saveStartup(Startup startup){
@@ -37,10 +43,14 @@ public class StartupService {
     }
 
     public Startup addUserToStartup(Long userId, Long startupId) {
-        Startup startup = startupRepository.findById(startupId).get();
-        User user = userRepository.findById(userId).get();
-        startup.setUser(user);
-        return startupRepository.save(startup);
+        Startup startup = null;
+        if (userRepository.existsById(userId) && startupRepository.existsById(startupId)){
+            startup = startupRepository.findById(startupId).get();
+            User user = userRepository.findById(userId).get();
+            startup.setUser(user);
+            startup = startupRepository.save(startup);
+        }
+        return startup;
     }
 
     public boolean deleteById(Long id) {
@@ -52,18 +62,26 @@ public class StartupService {
         }
     }
 
-    public ArrayList<Startup> getByTagName(String tagName) {
-        var startups = startupRepository.findAll();
-        for (Startup startup: startups ){
-            //startup.getTags();
-            System.out.println(startup.getTags());
-        }
+    public ArrayList<Tag> getTagByName(String name){
+        ArrayList<Tag> tags = new ArrayList<Tag>();
+        tags = tagRepository.findByNameContaining(name);
+        return tags;
+    }
 
-        return (ArrayList<Startup>) startupRepository.findByTagName(tagName);
+    public ArrayList<Startup> getByTagName(String tagName) {
+        ArrayList<Startup> startups = new ArrayList<Startup>();
+        for(Tag tag:getTagByName(tagName)){
+            startups.add(tag.getStartup());
+        }
+        return startups;
     }
 
     public Startup updateById(Long id, Startup startup) {
-        startup.setId(id);
-        return startupRepository.save(startup);
+        Startup startupResult =  null;
+        if(startupRepository.existsById(id)){
+            startup.setId(id);
+            startupResult = startupRepository.save(startup);
+        }
+        return startupResult;
     }
 }

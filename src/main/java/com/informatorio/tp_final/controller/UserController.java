@@ -139,7 +139,7 @@ public class UserController {
             User userCreated = userService.updateById(id, user);
             if( userCreated != null){
                 responseHasMap.put("Resultado", "El Usuario se ha actualizado exitosamente");
-                responseHasMap.put("Usuario Creado", userCreated);
+                responseHasMap.put("Usuario Actualizado", userCreated);
                 responseEntity = new ResponseEntity<>(responseHasMap, HttpStatus.OK);
             }else{
                 responseHasMap.put("Resultado", "No se pudo actualizar el Usuario");
